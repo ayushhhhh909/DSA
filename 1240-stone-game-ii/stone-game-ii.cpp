@@ -1,37 +1,36 @@
 class Solution {
     public:
-        int solve(vector<int>& piles, int i, int M, vector<vector<int>>& dp) {
-                int n = piles.size();
+        int dp [105][105];
+            vector<int> suffix;
+                int n;
 
-                        if(i >= n)
-                                    return 0;
+                    int f(int idx, int M){
+                            if(idx >= n) return 0;
 
-                                            if(dp[i][M] != -1)
-                                                        return dp[i][M];
+                                    if(dp[idx][M] != -1) return dp[idx][M];
 
-                                                                int stones = 0;
-                                                                        int result = 0;
+                                            int ans = 0;
 
-                                                                                for(int x = 1; x <= min(2 * M, n - i); x++) {
+                                                    for(int x = 1; x <= 2 * M; x++){
+                                                                int opponent = f(idx + x, max(M, x));
+                                                                            int current = suffix[idx] - opponent;
 
-                                                                                            stones += piles[i + x - 1];
+                                                                                        ans = max(ans, current);
+                                                                                                }
 
-                                                                                                        int total = stones + 
-                                                                                                                        (accumulate(piles.begin() + i + x, piles.end(), 0)
-                                                                                                                                        - solve(piles, i + x, max(M, x), dp));
+                                                                                                        return dp[idx][M] = ans;
+                                                                                                            }
+                                                                                                                int stoneGameII(vector<int>& piles) {
+                                                                                                                        n = piles.size();
+                                                                                                                                suffix.resize(n+1, 0);
 
-                                                                                                                                                    result = max(result, total);
+                                                                                                                                        for(int i = n-1; i >= 0; i--){
+                                                                                                                                                    suffix[i] = suffix[i+1] + piles[i];
                                                                                                                                                             }
 
-                                                                                                                                                                    return dp[i][M] = result;
-                                                                                                                                                                        }
+                                                                                                                                                                    memset(dp, -1, sizeof(dp));
 
-                                                                                                                                                                            int stoneGameII(vector<int>& piles) {
-                                                                                                                                                                                    int n = piles.size();
-
-                                                                                                                                                                                            vector<vector<int>> dp(n, vector<int>(n + 1, -1));
-
-                                                                                                                                                                                                    return solve(piles, 0, 1, dp);
-                                                                                                                                                                                                        }
-                                                                                                                                                                                                        };
+                                                                                                                                                                            return f(0, 1);
+                                                                                                                                                                                }
+                                                                                                                                                                                };
 
